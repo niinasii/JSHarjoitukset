@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>XHR - XMLHttpRequest</title>
+</head>
+
+<body>
+    <h1>XML Request</h1>
+    <button id="nappi" onclick="tulosta()">Hae!</button>
+    <div id="haettuteksti"></div>
+
+
+    <script>
+
+        const xhr = new XMLHttpRequest();
+        const nappi = document.getElementById('nappi');
+        const haettuteksti = document.getElementById('haettuteksti');
+
+        function tulosta() {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                        haettuteksti.innerText = xhr.responseText;
+                    } else {
+                        alert("Pyyntö epäonnistui");
+                    }
+                }
+            };
+
+            xhr.open('GET', 'teksti.txt');
+            xhr.send();
+
+        }
+
+        document.getElementById('nappi').onclick = tulosta;
+
+
+
+    </script>
+</body>
+
+</html>

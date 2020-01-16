@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Harjoitus 7</title>
+
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #toiminnot,
+        #tulosdiv {
+            min-width: 16em;
+            float: left;
+            width: 45%;
+        }
+
+        textarea {
+            width: 90%;
+            height: 8em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>WebSocket-harjoitus</h1>
+
+    <div id="toiminnot">
+        <div>
+            <p>Yhteyden avaaminen ja sulkeminen:</p>
+            <p>
+                <button type="button" class="auki" id="avaabtn">Avaa</button>
+                <button type="button" class="sulki" id="suljebtn">Sulje</button>
+            </p>
+        </div>
+        <div>
+            <p>Viestin lähetys</p>
+            <p><input type="text" id="viestikentta" /> <span>&nbsp;</span>
+                <button type="button" id="viestibtn">Lähetä</button>
+            </p>
+        </div>
+    </div>
+    <div id="tulosdiv">
+        <p>Loki</p>
+        <textarea id="vastaus"></textarea>
+    </div>
+
+    <script>
+
+        //Määritä yhteyttä kuvaava muuttuja
+        let yhteys;
+
+        //Määritä muut funktiot html-osasta javascriptiin
+        const avaabtn = document.getElementById('avaabtn');
+        const suljebtn = document.getElementById('suljebtn');
+        const viestikentta = document.getElementById('viestikentta');
+        const viestibtn = document.getElementById('viestibtn');
+        const vastaus = document.getElementById('vastaus');
+
+        //Kutsu luotua funktiota
+        sidoTapahtumat();
+
+        //avaa yhteys ja määrittele sille oma funktio
+        function avaaYhteys() {
+            yhteys = new WebSocket("ws://echo.websocket.org")
+            yhteys.onopen = yhteysAuki;
+        }
+
+        //sulje yhteys ja määrittele sille oma funktio
+        function suljeYhteys() {
+            if (yhteys) {
+                yhteys.onclose = () => {
+                    yhteysSuljettu();
+                    yhteys = null;
+                }
+                yhteys.close();
+            }
+        }
+
+        //lähetä viesti
+        function lahetaViesti() {
+            const teksti = viestikentta.value;
+            if (teksti) {
+                yhteys.send(teksti);
+                vastaus.value += `LÄHETETTY: ${teksti}\n`
+            }
+        }
+
+        //viesti vastaanotettu funktio, joka kirjoittaa viestin vastaus-lokiin
+        function viestiVastaanotettu(event) {
+            console.log("Viesti saatu", event);
+            vastaus.value += `SAATU: ${event.data}\n`
+        }
+
+        //jos yhteys on auki, avaa-buttonin on disabled status on true eli se on disabled = ei toimi
+        // Muiden kohteiden disabled status on false eli ne eivät ole disabeld = ne toimivat
+        function yhteysAuki() {
+            vastaus.value += `\nYhteys auki\n` // tämä tulostaa vastaus-tekstikentän arvoksi Yhteysauki
+            avaabtn.disabled = true;
+            suljebtn.disabled = false;
+            viestibtn.disabled = false;
+            yhteys.onmessage = viestiVastaanotettu;
+        }
+
+        // jos yhteys on kiinni, avaa-buttonin disabled status on false eli se ei ole disabled = toimii. 
+        //Sen sijaan muiden kohteiden disabled-status on true eli ne ovat disbaled = ei toimi.
+        function yhteysSuljettu() {
+            vastaus.value += `\nYhteys suljettu\n`
+            avaabtn.disabled = false;
+            suljebtn.disabled = true;
+            viestibtn.disabled = true;
+        }
+        // sitoo tapahtumat onclick tapahtuma > funktiot
+        function sidoTapahtumat() {
+            avaabtn.onclick = avaaYhteys;
+            suljebtn.onclick = suljeYhteys;
+            viestibtn.onclick = lahetaViesti;
+            suljebtn.disabled = true;
+            viestibtn.disabled = true;
+        }
+    </script>
+
+</body>
+
+</html>

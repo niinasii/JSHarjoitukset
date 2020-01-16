@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Harjoitus 8</title>
+   <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js "></script>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        pre {
+            max-height: 600px;
+            max-width: 800px;
+            background-color: silver;
+            border-radius: 15px;
+            font-family: monospace;
+            white-space: pre;
+            overflow: auto;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Drag-and-Drop</h1>
+    <pre id="draggialue" class="prettyprint" ondrop="drop(event)" ondragover="allowDrop(event)">
+        Droppaa tähän tekstiä
+        
+        Niin nähdään 
+        
+        toimiiko sun koodisi vai mokasitko!
+    </pre>
+
+    <script>
+
+        function allowDrop(ev) { ev.preventDefault(); }
+        
+        function drop(ev) {
+            draggialue.classList.remove("prettyprinted");
+            ev.preventDefault();
+            let files = ev.dataTransfer.files;
+
+            for (let i = 0; i < files.length; i++) {
+                let file = files[i];
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    let text = reader.result;
+                    //draggialue.innerText = text; Toinen tapa printata
+                    document.getElementById('draggialue').innerText = text; //printtaa tulos pre alueelle
+                    PR.prettyPrint();
+                }
+                reader.readAsText(file, "utf-8");
+            }
+        }
+    </script>
+</body>
+
+</html>

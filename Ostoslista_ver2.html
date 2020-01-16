@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Checkpoint 1 - Hedelmäsalaatti</title>
+</head>
+<body>
+    <h1>Ostoslista</h1>
+    <form>
+        <table>
+        <tr><td><label for="tuote">Tuote</label></td><td><input type="text" id="tuote" name="tuote"></td></tr>
+        <tr><td><label for="hinta">Hinta</label></td><td><input type="number" id="hinta" name="hinta"></td></tr>
+        <tr>
+            <td><button id="lisää" type="button" onclick="generateTuote()">Lisää tuote</button></td>
+            <td><button id="poista" type="button" onclick="poistaTuote()">Poista tuote</button></td>
+        </tr><tr> 
+            <td><button id="kallein" type="button" onclick="sorttaaKallein()">Kallein ensin</button></td>
+            <td><button id="halvin" type="button" onclick="sorttaaHalvin()">Halvin ensin</button></td>
+        </tr><tr>
+            <td><button id="näytäkallein" type="button" onclick="printtaaKallein()">Näytä kallein</button></td>
+            <td><button id="näytähalvin" type="button" onclick="printtaaHalvin()">Näytä halvin</button></td>
+        </tr>
+        </table>
+        </form>
+        <p><div id="showkallein"></div><div id="showhalvin"></div></p>
+        <p>
+        <ol id="lista"></ol>
+        </p>
+
+
+    <script>
+
+        let tuotteet = [];
+        
+        //Lisää listaan oliot käyttäjän syötteestä
+        function olio (tuote, hinta) {
+            this.tuote = tuote;
+            this.hinta = hinta;
+            this.addLista = function () {
+                return this.tuote + ' ' + this.hinta + ' €';
+            }
+        }
+        
+        function addLista() {
+            lista = "";
+            for (let i = 0; i < tuotteet.length; i++) {
+              lista += "<li>" + tuotteet[i].addLista() + "</li>";
+           }
+           document.getElementById("lista").innerHTML = lista;
+        }
+        
+        function generateTuote() {
+          let olioTuote =  new olio(
+            document.getElementById("tuote").value, 
+            document.getElementById("hinta").value
+          );
+        
+          tuotteet.push(olioTuote);
+          addLista();
+        }
+        
+        //Poista tuotteet arraysta
+        function poistaTuote() {
+            tuotteet.pop();
+            addLista();
+        }
+
+        // Järjestä olio arrayn kallein olio ensin hinta-propertyn mukaan, tulosta uusi array vanhan tilalle
+        function sorttaaKallein() {
+            function compare(a, b) {
+
+            const hintaA = parseInt(a.hinta); //toUpperCase
+            const hintaB = parseInt(b.hinta); //toUpperCase
+
+            let comparison = 0;
+            if (hintaA < hintaB) {
+            comparison = 1;
+            } else if (hintaA > hintaB) {
+            comparison = -1;
+            }
+
+            return comparison;
+            }
+
+        tuotteet.sort(compare);
+        addLista();
+        }
+
+        // Järjestä olio arrayn halvin olio ensin hinta-propertyn mukaan, tulosta uusi array vanhan tilalle
+        function sorttaaHalvin () {
+            function compare(a, b) {
+
+            const hintaA = parseInt(a.hinta);
+            const hintaB = parseInt(b.hinta);
+
+            let comparison = 0;
+            if (hintaA > hintaB) {
+            comparison = 1;
+            } else if (hintaA < hintaB) {
+            comparison = -1;
+            }
+
+            return comparison;
+            }
+
+        tuotteet.sort(compare);  
+        addLista();
+        }
+
+//näytä kallein
+    function printtaaKallein() {
+    let jonoHinnat = tuotteet.map((ostos) => {
+    return ostos.hinta })
+    
+
+var kallein = Math.max(...jonoHinnat);
+kallein.innerHTML = "";
+document.getElementById("showkallein").innerHTML = kallein + " €";
+
+    }
+
+//näytä halvin
+function printtaaHalvin() {
+let jonoHinnat2 = tuotteet.map((ostos) => {
+return ostos.hinta
+})
+
+var halvin = Math.min(...jonoHinnat2);
+halvin.innerHTML = "";
+document.getElementById("showhalvin").innerHTML = halvin + " €";
+}
+
+
+
+
+
+</script>
+</body>
+</html>

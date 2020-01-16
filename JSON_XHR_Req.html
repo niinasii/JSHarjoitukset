@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Harjoitus 2</title>
+</head>
+
+<body>
+
+    <h1>JSON XHR Request</h1>
+    <button id="nappi" onclick="tulosta()">Hae!</button>
+    <ul id="luotulista"></ul>
+    <script>
+
+        const xhr = new XMLHttpRequest();
+        const nappi = document.getElementById('nappi');
+
+        function tulosta() {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log(xhr.responseText);
+                        const henkilotaulu = JSON.parse(xhr.responseText);
+                        console.log(henkilotaulu);
+                        for (henkilo of henkilotaulu) {
+                            const uusili = document.createElement("LI");
+                            const uusiteksti = document.createTextNode(`${henkilo.nimi}, ikä : ${henkilo.ika}`);
+                            luotulista.appendChild(uusili);
+                            uusili.append(uusiteksti)
+                        }
+                    } else {
+                        alert("Mokasit");
+                    }
+                }
+            };
+
+            xhr.open('GET', 'henkilot.json');
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.send();
+
+        }
+
+        document.getElementById('nappi').onclick = tulosta;
+
+
+
+    </script>
+
+</body>
+
+</html>
